@@ -2,17 +2,12 @@ routes:
   -
     uri: /__auth/*
     service_id: 1
-    plugins:
-      proxy-rewrite:
-        regex_uri:
-          - "^/__auth/(.*)"
-          - "/$1"
   -
     uri: /web1/*
     service_id: 2
     plugins:
       forward-auth:
-        uri: "http://auth_apisix:9080/"
+        uri: "http://auth_apisix:9080/__auth/check"
         ssl_verify: false
         request_headers:
           - Cookie
@@ -33,7 +28,7 @@ routes:
     service_id: 3
     plugins:
       forward-auth:
-        uri: "http://auth_apisix:9080/"
+        uri: "http://auth_apisix:9080/__auth/check"
         ssl_verify: false
         request_headers:
           - Cookie
@@ -54,7 +49,7 @@ routes:
     service_id: 2
     plugins:
       forward-auth:
-        uri: "http://auth_apisix:9080/"
+        uri: "http://auth_apisix:9080/__auth/check"
         ssl_verify: false
         request_headers:
           - Cookie
@@ -75,7 +70,7 @@ routes:
     service_id: 4
     plugins:
       forward-auth:
-        uri: "http://auth_apisix:9080/"
+        uri: "http://auth_apisix:9080/__auth/check"
         ssl_verify: false
         request_headers:
           - Cookie
@@ -97,7 +92,7 @@ services:
     id: 1
     upstream:
       nodes:
-        "apisix_auth:9080": 1
+        "auth_apisix:9080": 1
       type: roundrobin
   -
     id: 2
