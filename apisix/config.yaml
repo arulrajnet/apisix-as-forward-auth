@@ -30,4 +30,14 @@ deployment:
   role_data_plane:
     config_provider: yaml
 
+nginx_config:
+  # HTTP server configuration snippet
+  http_configuration_snippet: |
+    client_body_buffer_size 100m;
+    client_header_buffer_size 100m;
+    # This needed to handle large headers like cookies from the authentication service.
+    proxy_buffers 4 10m;
+    proxy_buffer_size 10m;
+    proxy_busy_buffers_size 10m;
+
 # END

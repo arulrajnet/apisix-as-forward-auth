@@ -24,4 +24,10 @@ deployment:
   role_data_plane:
     config_provider: yaml
 
+nginx_config:
+  http_server_configuration_snippet: |
+    set $session_name "${{SESSION_NAME:= _my_session}}";
+    set $session_cookie_samesite Lax;
+    set $session_secret ${{SESSION_SECRET}};
+
 # END
