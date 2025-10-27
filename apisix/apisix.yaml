@@ -23,6 +23,7 @@ routes:
         client_headers:
           - Location
           - Content-Type
+          - Set-Cookie
   -
     uri: /web2/*
     service_id: 3
@@ -44,6 +45,7 @@ routes:
         client_headers:
           - Location
           - Content-Type
+          - Set-Cookie
   -
     uri: /*
     service_id: 2
@@ -65,6 +67,7 @@ routes:
         client_headers:
           - Location
           - Content-Type
+          - Set-Cookie
   -
     uri: /whoami/*
     service_id: 4
@@ -86,6 +89,7 @@ routes:
         client_headers:
           - Location
           - Content-Type
+          - Set-Cookie
 
 services:
   -
