@@ -1,0 +1,45 @@
+routes:
+  -
+    uri: /web1/*
+    service_id: 2
+  -
+    uri: /web2/*
+    service_id: 3
+  -
+    uri: /*
+    service_id: 2
+  -
+    uri: /__auth/*
+    service_id: 1
+  -
+    uri: /whoami/*
+    service_id: 4
+
+services:
+  -
+    id: 1
+    upstream:
+      nodes:
+        "apisix_auth:80": 1
+      type: roundrobin
+  -
+    id: 2
+    upstream:
+      nodes:
+        "web1:80": 1
+      type: roundrobin
+  -
+    id: 3
+    upstream:
+      nodes:
+        "web2:80": 1
+      type: roundrobin
+
+  -
+    id: 4
+    upstream:
+      nodes:
+        "whoami:80": 1
+      type: roundrobin
+
+#END
