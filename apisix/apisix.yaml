@@ -1,0 +1,145 @@
+routes:
+  -
+    uri: /__auth/*
+    service_id: 1
+    plugins:
+      proxy-rewrite:
+        regex_uri:
+          - "^/__auth/(.*)"
+          - "/$1"
+  -
+    uri: /web1/*
+    service_id: 2
+    plugins:
+      forward-auth:
+        uri: "http://auth_apisix:9080/"
+        ssl_verify: false
+        request_headers:
+          - Cookie
+          - X-Forwarded-Host
+          - X-Forwarded-Port
+        upstream_headers:
+          - X-Auth-Request-User
+          - X-Auth-Request-Email
+          - X-Auth-Request-Access-Token
+          - X-Auth-Request-ID-Token
+          - X-Auth-Request-Userinfo
+          - X-Auth-Request-Refresh-Token
+        client_headers:
+          - Location
+          - Content-Type
+  -
+    uri: /web2/*
+    service_id: 3
+    plugins:
+      forward-auth:
+        uri: "http://auth_apisix:9080/"
+        ssl_verify: false
+        request_headers:
+          - Cookie
+          - X-Forwarded-Host
+          - X-Forwarded-Port
+        upstream_headers:
+          - X-Auth-Request-User
+          - X-Auth-Request-Email
+          - X-Auth-Request-Access-Token
+          - X-Auth-Request-ID-Token
+          - X-Auth-Request-Userinfo
+          - X-Auth-Request-Refresh-Token
+        client_headers:
+          - Location
+          - Content-Type
+  -
+    uri: /*
+    service_id: 2
+    plugins:
+      forward-auth:
+        uri: "http://auth_apisix:9080/"
+        ssl_verify: false
+        request_headers:
+          - Cookie
+          - X-Forwarded-Host
+          - X-Forwarded-Port
+        upstream_headers:
+          - X-Auth-Request-User
+          - X-Auth-Request-Email
+          - X-Auth-Request-Access-Token
+          - X-Auth-Request-ID-Token
+          - X-Auth-Request-Userinfo
+          - X-Auth-Request-Refresh-Token
+        client_headers:
+          - Location
+          - Content-Type
+  -
+    uri: /whoami/*
+    service_id: 4
+    plugins:
+      forward-auth:
+        uri: "http://auth_apisix:9080/"
+        ssl_verify: false
+        request_headers:
+          - Cookie
+          - X-Forwarded-Host
+          - X-Forwarded-Port
+        upstream_headers:
+          - X-Auth-Request-User
+          - X-Auth-Request-Email
+          - X-Auth-Request-Access-Token
+          - X-Auth-Request-ID-Token
+          - X-Auth-Request-Userinfo
+          - X-Auth-Request-Refresh-Token
+        client_headers:
+          - Location
+          - Content-Type
+
+services:
+  -
+    id: 1
+    upstream:
+      nodes:
+        "apisix_auth:9080": 1
+      type: roundrobin
+  -
+    id: 2
+    upstream:
+      nodes:
+        "web1:80": 1
+      type: roundrobin
+  -
+    id: 3
+    upstream:
+      nodes:
+        "web2:80": 1
+      type: roundrobin
+
+  -
+    id: 4
+    upstream:
+      nodes:
+        "whoami:80": 1
+      type: roundrobin
+
+ssls:
+  - cert: |
+      -----BEGIN CERTIFICATE-----
+      MIIBfTCCASOgAwIBAgIUXLJHNck6V/e8Mj6LjpdIheLtDiIwCgYIKoZIzj0EAwIw
+      FDESMBAGA1UEAwwJbG9jYWxob3N0MB4XDTI1MTAyNzA3NTkxOVoXDTI2MTAyNzA3
+      NTkxOVowFDESMBAGA1UEAwwJbG9jYWxob3N0MFkwEwYHKoZIzj0CAQYIKoZIzj0D
+      AQcDQgAEjnsocl7a6sFt+TJIEXXDPO8oyfR1dto8BShN3y2P/EHQUKJWDAhCHLSq
+      FTLP13e3UoonKZItt6545stRSTiJ6aNTMFEwHQYDVR0OBBYEFJT4fCySk774RWWA
+      szTt1hjCOCoOMB8GA1UdIwQYMBaAFJT4fCySk774RWWAszTt1hjCOCoOMA8GA1Ud
+      EwEB/wQFMAMBAf8wCgYIKoZIzj0EAwIDSAAwRQIhANbwpAQLizvnfNkl49PDJp5L
+      FFmmPK67RK3KumoQca31AiAsD2g7Euu6F7kXFhkQH3ct6LWXcfz0FUxAbNx3ZZ8K
+      vA==
+      -----END CERTIFICATE-----
+    key: |
+      -----BEGIN PRIVATE KEY-----
+      MIGHAgEAMBMGByqGSM49AgEGCCqGSM49AwEHBG0wawIBAQQgD8uiahn+45Tj2JLO
+      2jb8WNQ6yiuUSKrPEFU+RxJUS4+hRANCAASOeyhyXtrqwW35MkgRdcM87yjJ9HV2
+      2jwFKE3fLY/8QdBQolYMCEIctKoVMs/Xd7dSiicpki23rnjmy1FJOInp
+      -----END PRIVATE KEY-----
+    snis:
+      - ${{SERVER_DOMAIN}}
+      - "*.${{SERVER_DOMAIN}}"
+
+#END

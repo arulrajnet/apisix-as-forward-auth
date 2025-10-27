@@ -5,22 +5,31 @@ services:
     restart: always
     environment:
       APISIX_STAND_ALONE: "true"
+      SERVER_DOMAIN: ${SERVER_DOMAIN}
     volumes:
-      - ${PWD}/apisix.yaml:/usr/local/apisix/conf/apisix.yaml
-      - ${PWD}/config.yaml:/usr/local/apisix/conf/config.yaml
+      - ${PWD}/apisix/apisix.yaml:/usr/local/apisix/conf/apisix.yaml
+      - ${PWD}/apisix/config.yaml:/usr/local/apisix/conf/config.yaml
+      - ${PWD}/apisix/debug.yaml:/usr/local/apisix/conf/debug.yaml
     ports:
       # Web - Proxy
       - 80:9080
       - 443:9443
 
-  apisix_auth:
+  auth_apisix:
     image: apache/apisix:${APISIX_VERSION:-3.14.1-debian}
     restart: always
     environment:
       APISIX_STAND_ALONE: "true"
+      AUTH0_CLIENT_ID: ${AUTH0_CLIENT_ID}
+      AUTH0_CLIENT_SECRET: ${AUTH0_CLIENT_SECRET}
+      AUTH0_DOMAIN: ${AUTH0_DOMAIN}
+      AUTH0_AUDIENCE: ${AUTH0_AUDIENCE}
+      SERVER_DOMAIN: ${SERVER_DOMAIN}
+      SESSION_SECRET: ${SESSION_SECRET}
     volumes:
-      - ${PWD}/apisix.yaml:/usr/local/apisix/conf/apisix.yaml
-      - ${PWD}/config.yaml:/usr/local/apisix/conf/config.yaml
+      - ${PWD}/auth_apisix/apisix.yaml:/usr/local/apisix/conf/apisix.yaml
+      - ${PWD}/auth_apisix/config.yaml:/usr/local/apisix/conf/config.yaml
+      - ${PWD}/auth_apisix/debug.yaml:/usr/local/apisix/conf/debug.yaml
     ports:
       # Web - Proxy
       - 9080
