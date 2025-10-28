@@ -1,9 +1,13 @@
 routes:
   -
-    uri: /__auth/*
+    uris:
+      - /__auth
+      - /__auth/*
     service_id: 1
   -
-    uri: /web1/*
+    uris:
+      - /web1
+      - /web1/*
     service_id: 2
     plugins:
       forward-auth:
@@ -26,7 +30,9 @@ routes:
           - Content-Type
           - Set-Cookie
   -
-    uri: /web2/*
+    uris:
+      - /web2
+      - /web2/*
     service_id: 3
     plugins:
       forward-auth:
@@ -49,7 +55,17 @@ routes:
           - Content-Type
           - Set-Cookie
   -
-    uri: /*
+    uri: /favicon.ico
+    priority: 100
+    service_id: 2
+    plugins:
+      mocking:
+        response_status: 404
+        response_example: "Not Found\n"
+  -
+    uris:
+      - /
+      - /*
     service_id: 2
     plugins:
       forward-auth:
@@ -72,7 +88,9 @@ routes:
           - Content-Type
           - Set-Cookie
   -
-    uri: /whoami/*
+    uris:
+      - /whoami
+      - /whoami/*
     service_id: 4
     plugins:
       forward-auth:
@@ -100,26 +118,38 @@ services:
     id: 1
     upstream:
       nodes:
-        "auth_apisix:9080": 1
+        -
+          host: auth_apisix
+          port: 9080
+          weight: 1
       type: roundrobin
   -
     id: 2
     upstream:
       nodes:
-        "web1:80": 1
+        -
+          host: web1
+          port: 80
+          weight: 1
       type: roundrobin
   -
     id: 3
     upstream:
       nodes:
-        "web2:80": 1
+        -
+          host: web2
+          port: 80
+          weight: 1
       type: roundrobin
 
   -
     id: 4
     upstream:
       nodes:
-        "whoami:80": 1
+        -
+          host: whoami
+          port: 80
+          weight: 1
       type: roundrobin
 
 ssls:
