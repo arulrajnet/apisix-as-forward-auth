@@ -24,9 +24,6 @@ routes:
         ssl_verify: false
         request_headers:
           - Cookie
-          - X-Forwarded-Host
-          - X-Forwarded-Port
-          - X-Forwarded-Proto
         upstream_headers:
           - X-Auth-Request-User
           - X-Auth-Request-Email
@@ -49,9 +46,6 @@ routes:
         ssl_verify: false
         request_headers:
           - Cookie
-          - X-Forwarded-Host
-          - X-Forwarded-Port
-          - X-Forwarded-Proto
         upstream_headers:
           - X-Auth-Request-User
           - X-Auth-Request-Email
@@ -82,9 +76,6 @@ routes:
         ssl_verify: false
         request_headers:
           - Cookie
-          - X-Forwarded-Host
-          - X-Forwarded-Port
-          - X-Forwarded-Proto
         upstream_headers:
           - X-Auth-Request-User
           - X-Auth-Request-Email
@@ -107,9 +98,6 @@ routes:
         ssl_verify: false
         request_headers:
           - Cookie
-          - X-Forwarded-Host
-          - X-Forwarded-Port
-          - X-Forwarded-Proto
         upstream_headers:
           - X-Auth-Request-User
           - X-Auth-Request-Email

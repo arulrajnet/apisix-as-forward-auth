@@ -25,6 +25,7 @@ routes:
             path: "/"
             secure: "on"
             http_only: "on"
+            same_site: "Lax"  # Add SameSite attribute for better compatibility
           secret: ${{SESSION_SECRET}}
       mocking:
         response_status: 202
