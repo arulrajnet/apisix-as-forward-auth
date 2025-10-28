@@ -21,7 +21,8 @@ routes:
         session:
           cookie:
             lifetime: 86400 #(integer, default: 3600): Lifetime of the session cookie in seconds.
-            domain: ".${{SERVER_DOMAIN}}"
+            domain: "${{SERVER_DOMAIN}}"
+            path: "/"
             secure: "on"
             http_only: "on"
           secret: ${{SESSION_SECRET}}

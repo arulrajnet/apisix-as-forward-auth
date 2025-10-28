@@ -1,3 +1,12 @@
+global_rules:
+  - id: 1
+    plugins:
+      request-id:
+        include_in_response: true
+      redirect:
+        http_to_https: true
+        ret_code: 301
+
 routes:
   -
     uris:
