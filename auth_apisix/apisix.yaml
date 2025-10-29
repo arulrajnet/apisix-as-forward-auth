@@ -1,8 +1,19 @@
 routes:
   -
     uris:
-      - /__auth/*
-      - /__auth/
+      - /*
+      - /
+    id: root
+    hosts:
+      - "${{SERVER_DOMAIN}}"
+    methods:
+      - GET
+      - HEAD
+      - POST
+      - PUT
+      - DELETE
+    priority: 5
+    enable_websocket: true
     plugins:
       openid-connect:
         bearer_only: false
@@ -10,8 +21,8 @@ routes:
         client_secret: ${{IDP_CLIENT_SECRET}}
         discovery: "https://${{IDP_DOMAIN}}/.well-known/openid-configuration"
         introspection_endpoint_auth_method: "client_secret_post"
-        logout_path: "/__auth/logout"
-        redirect_uri: "https://${{SERVER_DOMAIN}}/__auth/callback"
+        logout_path: "/logout"
+        redirect_uri: "https://${{SERVER_DOMAIN}}/callback"
         post_logout_redirect_uri: "https://${{SERVER_DOMAIN}}/"
         scope: "openid profile email"
         set_refresh_token_header: true
@@ -28,8 +39,8 @@ routes:
             same_site: "Lax"  # Add SameSite attribute for better compatibility
           secret: ${{SESSION_SECRET}}
       mocking:
-        response_status: 202
-        response_example: "User is authenticated successfully!\n"
+        response_status: 200
+        response_example: "Authendicated.\n"
       serverless-post-function:
         phase: access
         functions:
@@ -81,6 +92,9 @@ routes:
     upstream:
       type: roundrobin
       nodes:
-        "127.0.0.1:65535": 1
+        -
+          host: 127.0.0.1
+          port: 65535
+          weight: 1
 
 #END

@@ -1,10 +1,11 @@
 global_rules:
-  - id: 1
+  - id: global-rules
     plugins:
       request-id:
         include_in_response: true
       redirect:
         http_to_https: true
+        uri: "https://${{SERVER_DOMAIN}}$uri"
         ret_code: 301
 
 routes:
@@ -12,18 +13,55 @@ routes:
     uris:
       - /__auth
       - /__auth/*
-    service_id: 1
+    id: auth-root
+    service_id: auth
+    priority: 10
+    hosts:
+      - "${{SERVER_DOMAIN}}"
+    plugins:
+      proxy-rewrite:
+        regex_uri:
+          - "^/__auth/(.*)"
+          - "/$1"
+
+  -
+    uris:
+      - /callback
+    id: auth-callback
+    service_id: auth
+    priority: 11
+    hosts:
+      - "${{SERVER_DOMAIN}}"
+    plugins:
+      proxy-rewrite:
+        uri: "/callback"
+
+  -
+    uris:
+      - /logout
+    id: auth-logout
+    service_id: auth
+    hosts:
+      - "${{SERVER_DOMAIN}}"
+    plugins:
+      proxy-rewrite:
+        uri: "/logout"
+
   -
     uris:
       - /web1
       - /web1/*
-    service_id: 2
+    id: web1-route
+    service_id: web1
+    hosts:
+      - "${{SERVER_DOMAIN}}"
     plugins:
       forward-auth:
-        uri: "http://auth_apisix:9080/__auth/check"
+        uri: "http://auth_apisix:9080/"
         ssl_verify: false
         request_headers:
           - Cookie
+          - Host
         upstream_headers:
           - X-Auth-Request-User
           - X-Auth-Request-Email
@@ -39,13 +77,17 @@ routes:
     uris:
       - /web2
       - /web2/*
-    service_id: 3
+    id: web2-route
+    service_id: web2
+    hosts:
+      - "${{SERVER_DOMAIN}}"
     plugins:
       forward-auth:
-        uri: "http://auth_apisix:9080/__auth/check"
+        uri: "http://auth_apisix:9080/"
         ssl_verify: false
         request_headers:
           - Cookie
+          - Host
         upstream_headers:
           - X-Auth-Request-User
           - X-Auth-Request-Email
@@ -59,8 +101,11 @@ routes:
           - Set-Cookie
   -
     uri: /favicon.ico
+    id: favicon-route
     priority: 100
-    service_id: 2
+    service_id: web1
+    hosts:
+      - "${{SERVER_DOMAIN}}"
     plugins:
       mocking:
         response_status: 404
@@ -69,13 +114,18 @@ routes:
     uris:
       - /
       - /*
-    service_id: 2
+    id: root-route
+    service_id: web1
+    hosts:
+      - "${{SERVER_DOMAIN}}"
+    enable_websocket: true
     plugins:
       forward-auth:
-        uri: "http://auth_apisix:9080/__auth/check"
+        uri: "http://auth_apisix:9080/"
         ssl_verify: false
         request_headers:
           - Cookie
+          - Host
         upstream_headers:
           - X-Auth-Request-User
           - X-Auth-Request-Email
@@ -91,13 +141,17 @@ routes:
     uris:
       - /whoami
       - /whoami/*
+    id: whoami-route
     service_id: 4
+    hosts:
+      - "${{SERVER_DOMAIN}}"
     plugins:
       forward-auth:
-        uri: "http://auth_apisix:9080/__auth/check"
+        uri: "http://auth_apisix:9080/"
         ssl_verify: false
         request_headers:
           - Cookie
+          - Host
         upstream_headers:
           - X-Auth-Request-User
           - X-Auth-Request-Email
@@ -112,7 +166,7 @@ routes:
 
 services:
   -
-    id: 1
+    id: auth
     upstream:
       nodes:
         -
@@ -121,7 +175,7 @@ services:
           weight: 1
       type: roundrobin
   -
-    id: 2
+    id: web1
     upstream:
       nodes:
         -
@@ -130,7 +184,7 @@ services:
           weight: 1
       type: roundrobin
   -
-    id: 3
+    id: web2
     upstream:
       nodes:
         -
@@ -140,7 +194,7 @@ services:
       type: roundrobin
 
   -
-    id: 4
+    id: whoami
     upstream:
       nodes:
         -

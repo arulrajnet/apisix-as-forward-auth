@@ -6,7 +6,7 @@ apisix:
   enable_control: true
   enable_server_tokens: false
   error_log:
-    level: debug
+    level: ${LOG_LEVEL:=info}
 
 deployment:
   role: data_plane
@@ -25,7 +25,7 @@ deployment:
     config_provider: yaml
 
 nginx_config:
-  error_log_level: "debug"
+  error_log_level: "${{LOG_LEVEL:=info}}"
   http_server_configuration_snippet: |
     set $session_name "${{SESSION_NAME:= _my_session}}";
     set $session_cookie_samesite Lax;
