@@ -1,6 +1,6 @@
 routes:
-  -
-    uris:
+
+  - uris:
       - /*
       - /
     id: root
@@ -92,8 +92,7 @@ routes:
     upstream:
       type: roundrobin
       nodes:
-        -
-          host: 127.0.0.1
+        - host: 127.0.0.1
           port: 65535
           weight: 1
 

@@ -5,27 +5,10 @@ global_rules:
         include_in_response: true
       redirect:
         http_to_https: true
-        uri: "https://${{SERVER_DOMAIN}}$uri"
         ret_code: 301
 
 routes:
-  -
-    uris:
-      - /__auth
-      - /__auth/*
-    id: auth-root
-    service_id: auth
-    priority: 10
-    hosts:
-      - "${{SERVER_DOMAIN}}"
-    plugins:
-      proxy-rewrite:
-        regex_uri:
-          - "^/__auth/(.*)"
-          - "/$1"
-
-  -
-    uris:
+  - uris:
       - /callback
     id: auth-callback
     service_id: auth
@@ -36,8 +19,7 @@ routes:
       proxy-rewrite:
         uri: "/callback"
 
-  -
-    uris:
+  - uris:
       - /logout
     id: auth-logout
     service_id: auth
@@ -47,8 +29,7 @@ routes:
       proxy-rewrite:
         uri: "/logout"
 
-  -
-    uris:
+  - uris:
       - /web1
       - /web1/*
     id: web1-route
@@ -62,6 +43,7 @@ routes:
         request_headers:
           - Cookie
           - Host
+          - User-Agent
         upstream_headers:
           - X-Auth-Request-User
           - X-Auth-Request-Email
@@ -73,8 +55,8 @@ routes:
           - Location
           - Content-Type
           - Set-Cookie
-  -
-    uris:
+
+  - uris:
       - /web2
       - /web2/*
     id: web2-route
@@ -88,6 +70,7 @@ routes:
         request_headers:
           - Cookie
           - Host
+          - User-Agent
         upstream_headers:
           - X-Auth-Request-User
           - X-Auth-Request-Email
@@ -99,19 +82,8 @@ routes:
           - Location
           - Content-Type
           - Set-Cookie
-  -
-    uri: /favicon.ico
-    id: favicon-route
-    priority: 100
-    service_id: web1
-    hosts:
-      - "${{SERVER_DOMAIN}}"
-    plugins:
-      mocking:
-        response_status: 404
-        response_example: "Not Found\n"
-  -
-    uris:
+
+  - uris:
       - /
       - /*
     id: root-route
@@ -126,6 +98,7 @@ routes:
         request_headers:
           - Cookie
           - Host
+          - User-Agent
         upstream_headers:
           - X-Auth-Request-User
           - X-Auth-Request-Email
@@ -137,12 +110,12 @@ routes:
           - Location
           - Content-Type
           - Set-Cookie
-  -
-    uris:
+
+  - uris:
       - /whoami
       - /whoami/*
     id: whoami-route
-    service_id: 4
+    service_id: whoami
     hosts:
       - "${{SERVER_DOMAIN}}"
     plugins:
@@ -152,6 +125,7 @@ routes:
         request_headers:
           - Cookie
           - Host
+          - User-Agent
         upstream_headers:
           - X-Auth-Request-User
           - X-Auth-Request-Email
@@ -165,40 +139,34 @@ routes:
           - Set-Cookie
 
 services:
-  -
-    id: auth
+  - id: auth
     upstream:
       nodes:
-        -
-          host: auth_apisix
+        - host: auth_apisix
           port: 9080
           weight: 1
       type: roundrobin
-  -
-    id: web1
+
+  - id: web1
     upstream:
       nodes:
-        -
-          host: web1
-          port: 80
-          weight: 1
-      type: roundrobin
-  -
-    id: web2
-    upstream:
-      nodes:
-        -
-          host: web2
+        - host: web1
           port: 80
           weight: 1
       type: roundrobin
 
-  -
-    id: whoami
+  - id: web2
     upstream:
       nodes:
-        -
-          host: whoami
+        - host: web2
+          port: 80
+          weight: 1
+      type: roundrobin
+
+  - id: whoami
+    upstream:
+      nodes:
+        - host: whoami
           port: 80
           weight: 1
       type: roundrobin
