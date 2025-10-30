@@ -115,7 +115,7 @@ Based on the commit history, here are the important learnings and evolution of t
 ### 2. **Proper headers passed from main gateway to auth server (request_headers)**
 - **Initial Challenge**: Callback returns 500 error with the message "the error request to the redirect_uri path, but there's no session state found"
 - **Solution**: Need to send the `Host` and `User-Agent` headers from the main APISIX gateway to the auth APISIX instance
-- **Learning**: The hosts is configured in the routes of auth APISIX, so the `Host` header must match for proper routing. The `User-Agent` header is also required by `resty-session`, its used this to identify the client session. Refer [resty-session code](https://github.com/bungle/lua-resty-session/blob/v3.10/lib/resty/session.lua#L591)
+- **Learning**: The hosts is configured in the routes of auth APISIX, so the `Host` header must match for proper routing. The `User-Agent` header is also required by `resty-session`, It's used to identify the client session. Refer [resty-session code](https://github.com/bungle/lua-resty-session/blob/v3.10/lib/resty/session.lua#L591)
 
 ### 3. **Proper headers passed from auth server to browser (client_headers)**
 - **Initial Challenge**: Too many redirects when accessing protected routes before login.

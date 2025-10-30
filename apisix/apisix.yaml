@@ -46,7 +46,7 @@ routes:
           - Host
           - User-Agent
         upstream_headers:
-          - X-Auth-Request-User
+          - X-Auth-Request-User-Id
           - X-Auth-Request-Email
           - X-Auth-Request-Name
           - X-Auth-Request-Access-Token
@@ -74,7 +74,7 @@ routes:
           - Host
           - User-Agent
         upstream_headers:
-          - X-Auth-Request-User
+          - X-Auth-Request-User-Id
           - X-Auth-Request-Email
           - X-Auth-Request-Name
           - X-Auth-Request-Access-Token
@@ -103,7 +103,7 @@ routes:
           - Host
           - User-Agent
         upstream_headers:
-          - X-Auth-Request-User
+          - X-Auth-Request-User-Id
           - X-Auth-Request-Email
           - X-Auth-Request-Name
           - X-Auth-Request-Access-Token
@@ -131,7 +131,7 @@ routes:
           - Host
           - User-Agent
         upstream_headers:
-          - X-Auth-Request-User
+          - X-Auth-Request-User-Id
           - X-Auth-Request-Email
           - X-Auth-Request-Name
           - X-Auth-Request-Access-Token
