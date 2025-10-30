@@ -26,15 +26,6 @@ deployment:
 
 nginx_config:
   error_log_level: "${{LOG_LEVEL:=info}}"
-  http_configuration_snippet: |
-    client_body_buffer_size 100m;
-    client_header_buffer_size 100m;
-    # CRITICAL: This is the key setting for large cookies/headers
-    large_client_header_buffers 4 100m;
-    # This needed to handle large headers like cookies from the authentication service.
-    proxy_buffers 4 10m;
-    proxy_buffer_size 10m;
-    proxy_busy_buffers_size 10m;
   http_server_configuration_snippet: |
     set $session_name "${{SESSION_NAME:= _my_session}}";
     set $session_cookie_samesite Lax;
