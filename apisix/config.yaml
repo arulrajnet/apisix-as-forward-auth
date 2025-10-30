@@ -1,0 +1,37 @@
+apisix:
+  node_listen:
+    - port: 9080
+  enable_ipv6: false
+  enable_http2: true
+  enable_control: true
+  enable_server_tokens: false
+  ssl:
+    enable: true
+    listen:
+      - port: 9443
+    ssl_protocols: "TLSv1.1 TLSv1.2 TLSv1.3"
+    ssl_ciphers: "ECDHE-ECDSA-AES128-GCM-SHA256:ECDHE-RSA-AES128-GCM-SHA256:ECDHE-ECDSA-AES256-GCM-SHA384:ECDHE-RSA-AES256-GCM-SHA384:ECDHE-ECDSA-CHACHA20-POLY1305:ECDHE-RSA-CHACHA20-POLY1305:DHE-RSA-AES128-GCM-SHA256:DHE-RSA-AES256-GCM-SHA384"
+  error_log:
+    level: ${{LOG_LEVEL:=info}}
+
+deployment:
+  role: data_plane
+  role_data_plane:
+    config_provider: yaml
+
+plugin_attr:
+  prometheus:
+    export_addr:
+      ip: "0.0.0.0"
+      port: 9091
+
+nginx_config:
+  error_log_level: "${{LOG_LEVEL:=info}}"
+  # HTTP server configuration snippet
+  http_configuration_snippet: |
+    # This needed to handle large headers like cookies from the authentication service.
+    proxy_buffers 4 10m;
+    proxy_buffer_size 10m;
+    proxy_busy_buffers_size 10m;
+
+# END

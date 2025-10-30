@@ -1,0 +1,111 @@
+services:
+
+  apisix:
+    image: apache/apisix:${APISIX_VERSION:-3.14.1-debian}
+    restart: always
+    environment:
+      APISIX_STAND_ALONE: "true"
+      SERVER_DOMAIN: ${SERVER_DOMAIN}
+    volumes:
+      - ${PWD}/apisix/apisix.yaml:/usr/local/apisix/conf/apisix.yaml
+      - ${PWD}/apisix/config.yaml:/usr/local/apisix/conf/config.yaml
+      - ${PWD}/apisix/debug.yaml:/usr/local/apisix/conf/debug.yaml
+    ports:
+      # Web - Proxy
+      - 80:9080
+      - 443:9443
+
+  auth_apisix:
+    image: apache/apisix:${APISIX_VERSION:-3.14.1-debian}
+    restart: always
+    environment:
+      APISIX_STAND_ALONE: "true"
+      IDP_CLIENT_ID: ${IDP_CLIENT_ID}
+      IDP_CLIENT_SECRET: ${IDP_CLIENT_SECRET}
+      IDP_DOMAIN: ${IDP_DOMAIN}
+      IDP_AUDIENCE: ${IDP_AUDIENCE}
+      SERVER_DOMAIN: ${SERVER_DOMAIN}
+      SESSION_SECRET: ${SESSION_SECRET}
+    volumes:
+      - ${PWD}/auth_apisix/apisix.yaml:/usr/local/apisix/conf/apisix.yaml
+      - ${PWD}/auth_apisix/config.yaml:/usr/local/apisix/conf/config.yaml
+      - ${PWD}/auth_apisix/debug.yaml:/usr/local/apisix/conf/debug.yaml
+    ports:
+      # Web - Proxy
+      - 9080
+
+
+  whoami:
+    image: traefik/whoami:${TRAEFIK_WHOAMI_VERSION:-v1.11.0}
+    ports:
+      - 80
+
+  web1:
+    image: nginx:${NGINX_VERSION:-1.29.2-alpine}
+    restart: always
+    configs:
+      - source: web1.html
+        target: /usr/share/nginx/html/index.html
+      - source: default.conf
+        target: /etc/nginx/conf.d/default.conf
+    ports:
+      - 80
+
+  web2:
+    image: nginx:${NGINX_VERSION:-1.29.2-alpine}
+    restart: always
+    configs:
+      - source: web2.html
+        target: /usr/share/nginx/html/index.html
+      - source: default.conf
+        target: /etc/nginx/conf.d/default.conf
+    ports:
+      - 80
+
+configs:
+  web1.html:
+    content: |
+      <!doctype html>
+      <html>
+        <head>
+          <title>Hello Web1</title>
+          <meta charset="utf-8" />
+        </head>
+        <body>
+          <h1>
+            Hello Web1!
+          </h1>
+        </body>
+      </html>
+  web2.html:
+    content: |
+      <!doctype html>
+      <html>
+        <head>
+          <title>Hello Web2</title>
+          <meta charset="utf-8" />
+        </head>
+        <body>
+          <h1>
+            Hello Web2!
+          </h1>
+        </body>
+      </html>
+  default.conf:
+    content: |
+      server {
+        listen       80;
+        listen  [::]:80;
+        server_name  localhost;
+
+        location / {
+          root   /usr/share/nginx/html;
+          index  index.html index.htm;
+          try_files $$uri $$uri/ /index.html;
+        }
+
+        error_page   500 502 503 504  /50x.html;
+        location = /50x.html {
+          root   /usr/share/nginx/html;
+        }
+      }

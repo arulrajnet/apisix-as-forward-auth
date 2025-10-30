@@ -1,0 +1,29 @@
+apisix:
+  node_listen:
+    - port: 9080
+  enable_ipv6: false
+  enable_http2: true
+  enable_control: true
+  enable_server_tokens: false
+  error_log:
+    level: ${LOG_LEVEL:=info}
+
+deployment:
+  role: data_plane
+  role_data_plane:
+    config_provider: yaml
+
+plugin_attr:
+  prometheus:
+    export_addr:
+      ip: "0.0.0.0"
+      port: 9091
+
+nginx_config:
+  error_log_level: "${{LOG_LEVEL:=info}}"
+  http_server_configuration_snippet: |
+    set $session_name "${{SESSION_NAME:= _my_session}}";
+    set $session_cookie_samesite Lax;
+    set $session_secret ${{SESSION_SECRET}};
+
+# END
