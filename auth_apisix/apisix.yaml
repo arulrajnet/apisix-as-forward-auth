@@ -40,9 +40,9 @@ routes:
           secret: ${{SESSION_SECRET}}
       mocking:
         response_status: 200
-        response_example: "Authendicated.\n"
+        response_example: "Authenticated.\n"
       serverless-post-function:
-        phase: access
+        phase: header_filter
         functions:
           - |
             return function(conf, ctx)
@@ -59,34 +59,34 @@ routes:
                   -- Parse JSON
                   local userinfo = core.json.decode(userinfo_json)
                   if userinfo then
-                    -- Set individual headers
-                    core.request.set_header(ctx, 'X-Auth-Request-User-Id', userinfo.sub or '')
-                    core.request.set_header(ctx, 'X-Auth-Request-Email', userinfo.email or '')
-                    core.request.set_header(ctx, 'X-Auth-Request-Name', userinfo.name or '')
+                    -- Set individual response headers
+                    core.response.set_header('X-Auth-Request-User-Id', userinfo.sub or '')
+                    core.response.set_header('X-Auth-Request-Email', userinfo.email or '')
+                    core.response.set_header('X-Auth-Request-Name', userinfo.name or '')
                   end
                 end
               end
 
-              -- Rename existing headers for upstream
+              -- Set response headers from request headers
 
               local access_token = core.request.header(ctx, 'X-Access-Token')
               if access_token then
-                core.request.set_header(ctx, 'X-Auth-Request-Access-Token', access_token)
+                core.response.set_header('X-Auth-Request-Access-Token', access_token)
               end
 
               local id_token = core.request.header(ctx, 'X-ID-Token')
               if id_token then
-                core.request.set_header(ctx, 'X-Auth-Request-ID-Token', id_token)
+                core.response.set_header('X-Auth-Request-ID-Token', id_token)
               end
 
               local refresh_token = core.request.header(ctx, 'X-Refresh-Token')
               if refresh_token then
-                core.request.set_header(ctx, 'X-Auth-Request-Refresh-Token', refresh_token)
+                core.response.set_header('X-Auth-Request-Refresh-Token', refresh_token)
               end
 
               local userinfo_raw = core.request.header(ctx, 'X-Userinfo')
               if userinfo_raw then
-                core.request.set_header(ctx, 'X-Auth-Request-Userinfo', userinfo_raw)
+                core.response.set_header('X-Auth-Request-Userinfo', userinfo_raw)
               end
             end
     upstream:

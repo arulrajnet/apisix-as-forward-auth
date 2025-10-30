@@ -8,6 +8,7 @@ global_rules:
         ret_code: 301
 
 routes:
+
   - uris:
       - /callback
     id: auth-callback
@@ -47,6 +48,7 @@ routes:
         upstream_headers:
           - X-Auth-Request-User
           - X-Auth-Request-Email
+          - X-Auth-Request-Name
           - X-Auth-Request-Access-Token
           - X-Auth-Request-ID-Token
           - X-Auth-Request-Userinfo
@@ -74,6 +76,7 @@ routes:
         upstream_headers:
           - X-Auth-Request-User
           - X-Auth-Request-Email
+          - X-Auth-Request-Name
           - X-Auth-Request-Access-Token
           - X-Auth-Request-ID-Token
           - X-Auth-Request-Userinfo
@@ -102,6 +105,7 @@ routes:
         upstream_headers:
           - X-Auth-Request-User
           - X-Auth-Request-Email
+          - X-Auth-Request-Name
           - X-Auth-Request-Access-Token
           - X-Auth-Request-ID-Token
           - X-Auth-Request-Userinfo
@@ -129,6 +133,7 @@ routes:
         upstream_headers:
           - X-Auth-Request-User
           - X-Auth-Request-Email
+          - X-Auth-Request-Name
           - X-Auth-Request-Access-Token
           - X-Auth-Request-ID-Token
           - X-Auth-Request-Userinfo
